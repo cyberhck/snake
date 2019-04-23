@@ -4,7 +4,6 @@ export interface ICords {
 }
 export interface IPoint {
     location: ICords;
-    soft?: boolean;
     color: string;
 }
 export class Renderer {

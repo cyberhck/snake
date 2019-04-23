@@ -111,6 +111,7 @@ var Game = /** @class */ (function () {
         this.currentFrog = null;
         this.isGameOver = false;
         arena.insert(this.starting);
+        arena.insert(this.getDirectedPoint(this.starting.location));
         this.starting.color = snakeColor;
         this.spawnNewFrog();
     }
@@ -126,9 +127,10 @@ var Game = /** @class */ (function () {
         }
         var head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {
-            head.soft = true;
-            this.arena.insert(head);
             this.spawnNewFrog();
+        }
+        else {
+            this.arena.remove();
         }
         if (this.snakeContainsCoordinates(head.location)) {
             this.onGameOverCallback("collided with body");
@@ -143,7 +145,6 @@ var Game = /** @class */ (function () {
         // if head collides with body, exit
         // if head collies with wall, exit
         this.arena.insert(head);
-        this.arena.remove();
     };
     Game.prototype.onGameOver = function (fn) {
         this.onGameOverCallback = fn;
@@ -205,7 +206,7 @@ var Game = /** @class */ (function () {
         };
     };
     Game.prototype.snakeContainsCoordinates = function (a) {
-        return this.arena.getAll().some(function (x) { return Game.areSameCoordinate(x.location, a) && x.soft === false; });
+        return this.arena.getAll().some(function (x) { return Game.areSameCoordinate(x.location, a); });
     };
     Game.getRandomLocation = function (max_x, max_y) {
         return {

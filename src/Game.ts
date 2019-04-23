@@ -21,6 +21,7 @@ export class Game {
 
     constructor(private arena: Queue<IPoint>, private snakeColor: string = "#FF0") {
         arena.insert(this.starting);
+        arena.insert(this.getDirectedPoint(this.starting.location));
         this.starting.color = snakeColor;
         this.spawnNewFrog();
     }
@@ -39,9 +40,9 @@ export class Game {
         }
         const head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {
-            head.soft = true;
-            this.arena.insert(head);
             this.spawnNewFrog();
+        } else {
+            this.arena.remove();
         }
         if (this.snakeContainsCoordinates(head.location)) {
             this.onGameOverCallback("collided with body");
@@ -56,7 +57,6 @@ export class Game {
         // if head collides with body, exit
         // if head collies with wall, exit
         this.arena.insert(head);
-        this.arena.remove();
     }
 
     public onGameOver(fn: (reason: string) => void): void {
@@ -131,7 +131,7 @@ export class Game {
     }
 
     private snakeContainsCoordinates(a: ICords): boolean {
-        return this.arena.getAll().some((x) => Game.areSameCoordinate(x.location, a) && x.soft === false);
+        return this.arena.getAll().some((x) => Game.areSameCoordinate(x.location, a));
     }
 
     private static getRandomLocation(max_x: number, max_y: number): ICords {
