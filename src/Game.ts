@@ -20,6 +20,7 @@ export class Game {
     private isGameOver: boolean = false;
     private lastStep: number = 0;
     private currentFrame: number = 0;
+    private velocity: number = 500;
 
     constructor(private arena: Queue<IPoint>, private snakeColor: string = "#FF0") {
         arena.insert(this.starting);
@@ -34,6 +35,13 @@ export class Game {
 
     public getCurrentScore(): number {
         return this.arena.getAll().length;
+    }
+
+    public accelerate(): void {
+        this.velocity = 100;
+    }
+    public decelerate(): void {
+        this.velocity = 300;
     }
 
     public forceStep(): void {
@@ -64,7 +72,7 @@ export class Game {
             return;
         }
         this.currentFrame = dt;
-        if (dt - this.lastStep < 500) {
+        if (dt - this.lastStep < this.velocity) {
             return;
         }
         this.lastStep = dt;

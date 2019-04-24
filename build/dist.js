@@ -112,6 +112,7 @@ var Game = /** @class */ (function () {
         this.isGameOver = false;
         this.lastStep = 0;
         this.currentFrame = 0;
+        this.velocity = 500;
         arena.insert(this.starting);
         arena.insert(this.getDirectedPoint(this.starting.location));
         this.starting.color = snakeColor;
@@ -122,6 +123,12 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.getCurrentScore = function () {
         return this.arena.getAll().length;
+    };
+    Game.prototype.accelerate = function () {
+        this.velocity = 100;
+    };
+    Game.prototype.decelerate = function () {
+        this.velocity = 300;
     };
     Game.prototype.forceStep = function () {
         this.lastStep = this.currentFrame;
@@ -151,7 +158,7 @@ var Game = /** @class */ (function () {
             return;
         }
         this.currentFrame = dt;
-        if (dt - this.lastStep < 500) {
+        if (dt - this.lastStep < this.velocity) {
             return;
         }
         this.lastStep = dt;
@@ -329,7 +336,6 @@ var renderer = new Renderer_1.Renderer(canvas, "#FFF");
 renderer.scale(10, 10);
 var queue = new Queue_1.Queue();
 var game = new Game_1.Game(queue);
-var handler = null;
 var draw = function (queue, frog, renderer) {
     renderer.clear();
     renderer.draw(queue.getAll().concat([frog]));
@@ -343,6 +349,15 @@ game.onDirectionChange(function () {
 });
 window.addEventListener("keyup", function (e) {
     switch (e.code) {
+        case "ShiftLeft":
+            game.decelerate();
+            break;
+        default:
+            break;
+    }
+});
+window.addEventListener("keydown", function (e) {
+    switch (e.code) {
         case "ArrowUp":
             game.setUp();
             break;
@@ -354,6 +369,9 @@ window.addEventListener("keyup", function (e) {
             break;
         case "ArrowRight":
             game.setRight();
+            break;
+        case "ShiftLeft":
+            game.accelerate();
             break;
         default:
             break;

@@ -1,14 +1,12 @@
 import {Game} from "./Game";
 import {Queue} from "./Queue";
 import {IPoint, Renderer} from "./Renderer";
-import Timeout = NodeJS.Timeout;
 
 const canvas = document.getElementById("arena") as HTMLCanvasElement;
 const renderer = new Renderer(canvas, "#FFF");
 renderer.scale(10, 10);
 const queue = new Queue<IPoint>();
 const game = new Game(queue);
-let handler: Timeout = null;
 
 const draw = (queue: Queue<IPoint>, frog: IPoint, renderer: Renderer) => {
     renderer.clear();
@@ -26,6 +24,16 @@ game.onDirectionChange(() => {
 
 window.addEventListener("keyup", (e) => {
     switch (e.code) {
+        case "ShiftLeft":
+            game.decelerate();
+            break;
+        default:
+            break;
+    }
+});
+
+window.addEventListener("keydown", (e) => {
+    switch (e.code) {
         case "ArrowUp":
             game.setUp();
             break;
@@ -37,6 +45,9 @@ window.addEventListener("keyup", (e) => {
             break;
         case "ArrowRight":
             game.setRight();
+            break;
+        case "ShiftLeft":
+            game.accelerate();
             break;
         default:
             break;
