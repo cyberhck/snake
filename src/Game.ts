@@ -45,6 +45,9 @@ export class Game {
     }
 
     public forceStep(): void {
+        if (this.isGameOver) {
+            return;
+        }
         this.lastStep = this.currentFrame;
         const head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {

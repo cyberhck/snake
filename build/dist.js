@@ -131,6 +131,9 @@ var Game = /** @class */ (function () {
         this.velocity = 300;
     };
     Game.prototype.forceStep = function () {
+        if (this.isGameOver) {
+            return;
+        }
         this.lastStep = this.currentFrame;
         var head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {
