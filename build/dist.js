@@ -110,6 +110,8 @@ var Game = /** @class */ (function () {
         this.MAX_Y = 50;
         this.currentFrog = null;
         this.isGameOver = false;
+        this.lastStep = 0;
+        this.currentFrame = 0;
         arena.insert(this.starting);
         arena.insert(this.getDirectedPoint(this.starting.location));
         this.starting.color = snakeColor;
@@ -121,10 +123,8 @@ var Game = /** @class */ (function () {
     Game.prototype.getCurrentScore = function () {
         return this.arena.getAll().length;
     };
-    Game.prototype.step = function () {
-        if (this.isGameOver) {
-            return;
-        }
+    Game.prototype.forceStep = function () {
+        this.lastStep = this.currentFrame;
         var head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {
             this.spawnNewFrog();
@@ -145,6 +145,17 @@ var Game = /** @class */ (function () {
         // if head collides with body, exit
         // if head collies with wall, exit
         this.arena.insert(head);
+    };
+    Game.prototype.step = function (dt) {
+        if (this.isGameOver) {
+            return;
+        }
+        this.currentFrame = dt;
+        if (dt - this.lastStep < 500) {
+            return;
+        }
+        this.lastStep = dt;
+        this.forceStep();
     };
     Game.prototype.onGameOver = function (fn) {
         this.onGameOverCallback = fn;
@@ -328,9 +339,7 @@ game.onGameOver(function (reason) {
     console.log(reason);
 });
 game.onDirectionChange(function () {
-    clearTimeout(handler);
-    game.step();
-    performStep();
+    game.forceStep();
 });
 window.addEventListener("keyup", function (e) {
     switch (e.code) {
@@ -356,13 +365,11 @@ var loop = function () {
     requestAnimationFrame(loop);
 };
 loop();
-var performStep = function () {
-    handler = setTimeout(function () {
-        game.step();
-        performStep();
-    }, 200);
+var gameStep = function (dt) {
+    game.step(dt);
+    requestAnimationFrame(gameStep);
 };
-performStep();
+gameStep(0);
 
 
 /***/ })

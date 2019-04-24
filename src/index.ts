@@ -21,9 +21,7 @@ game.onGameOver((reason: string) => {
 });
 
 game.onDirectionChange(() => {
-    clearTimeout(handler);
-    game.step();
-    performStep();
+    game.forceStep()
 });
 
 window.addEventListener("keyup", (e) => {
@@ -53,10 +51,9 @@ const loop = () => {
 
 loop();
 
-const performStep = () => {
-    handler = setTimeout(() => {
-        game.step();
-        performStep();
-    }, 200);
+
+const gameStep = (dt: number) => {
+    game.step(dt);
+    requestAnimationFrame(gameStep);
 };
-performStep();
+gameStep(0);

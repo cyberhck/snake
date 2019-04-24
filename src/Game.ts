@@ -18,6 +18,8 @@ export class Game {
     private readonly MAX_Y = 50;
     private currentFrog: IPoint = null;
     private isGameOver: boolean = false;
+    private lastStep: number = 0;
+    private currentFrame: number = 0;
 
     constructor(private arena: Queue<IPoint>, private snakeColor: string = "#FF0") {
         arena.insert(this.starting);
@@ -34,10 +36,8 @@ export class Game {
         return this.arena.getAll().length;
     }
 
-    public step(): void {
-        if (this.isGameOver) {
-            return;
-        }
+    public forceStep(): void {
+        this.lastStep = this.currentFrame;
         const head = this.getDirectedPoint(this.arena.queryFirstElement().location);
         if (Game.areSameCoordinate(head.location, this.currentFrog.location)) {
             this.spawnNewFrog();
@@ -57,6 +57,18 @@ export class Game {
         // if head collides with body, exit
         // if head collies with wall, exit
         this.arena.insert(head);
+    }
+
+    public step(dt: number): void {
+        if (this.isGameOver) {
+            return;
+        }
+        this.currentFrame = dt;
+        if (dt - this.lastStep < 500) {
+            return;
+        }
+        this.lastStep = dt;
+        this.forceStep();
     }
 
     public onGameOver(fn: (reason: string) => void): void {
