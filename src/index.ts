@@ -45,10 +45,13 @@ window.addEventListener("keyup", (e) => {
     }
 });
 
-requestAnimationFrame(() => {
+const loop = () => {
     const frog = game.getCurrentFrog();
     draw(queue, frog, renderer);
-});
+    requestAnimationFrame(loop);
+};
+
+loop();
 
 const performStep = () => {
     handler = setTimeout(() => {

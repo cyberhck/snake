@@ -350,10 +350,12 @@ window.addEventListener("keyup", function (e) {
             break;
     }
 });
-requestAnimationFrame(function () {
+var loop = function () {
     var frog = game.getCurrentFrog();
     draw(queue, frog, renderer);
-});
+    requestAnimationFrame(loop);
+};
+loop();
 var performStep = function () {
     handler = setTimeout(function () {
         game.step();
